@@ -5,5 +5,5 @@ setwd("D:\\College\\Projects\\Data Science\\Forward-DS-project")#Mahmoud
 getwd()
 weather_training<-read.csv("Weather Training Data.csv")
 #weather_training
+colMeans(weather_training)
 table(weather_training$WindGustDir)
-barplot(weather_training$WindGustDir,xlab = weather_training$Location, ylab = weather_training$Rainfall)
