@@ -54,36 +54,31 @@ weather_training = weather_training %>%
   mutate(Cloud3pm = replace_na(as.numeric(Cloud3pm), cloud3Avg)) %>%
   mutate(Temp9am = replace_na(Temp9am, temp9Avg)) %>%
   mutate(Temp3pm = replace_na(Temp3pm, temp3Avg))
-          
-dim(weather_training)
-# 
-# quartiles = quantile(weather_training$MinTemp, probs = c(0.25, 0.75), na.rm = FALSE)
-# IQR = IQR(weather_training$MinTemp)
-# 
-# Lower = quartiles[1] - 1.5*IQR
-# Upper = quartiles[2] + 1.5*IQR
-# 
-# data_no_out = subset(weather_training, weather_training$MinTemp > Lower & weather_training$MinTemp < Upper)
-# 
-# dim(data_no_out)
 
-remove_outliers = function(data){
-  class(data)
-  for(i in data){
-    for( j in data[i]){
-      quartiles = quantile(data[i][j], probs = c(0.25, 0.75), na.rm = FALSE)
-      IQR = IQR(data[i][j])
-      
-      Lower = quartiles[1] - 1.5*IQR
-      Upper = quartiles[2] + 1.5*IQR
-      
-      if(data[i][j] > Lower & data[i][j] < Upper){
-        cbind(frame2, data[i])
-      }
-    }
-    
-  }
+
+detect_outlier = function(x) {
+  
+  Quantile1 = quantile(x, probs=0.25)
+  
+  Quantile3 = quantile(x, probs=0.75)
+  
+  IQR = Quantile3 - Quantile1
+  
+  x > Quantile3 + (IQR*1.5) | x < Quantile1 - (IQR*1.5)
 }
 
-
+remove_outliers = function(dataframe, columns = names(dataframe)){
+  
+  
+  for(col in columns){
+    dataframe = dataframe[!detect_outlier(dataframe[[col]]), ]
+  }
+  
+  print("Remove outliers")
+  boxplot(dataframe)
+  
+}
+remove_outliers(weather_training, c("MinTemp", "MaxTemp", "Rainfall", "Evaporation", "Sunshine", "WindSpeed9am", "WindSpeed3pm", "Humidity9am", "Humidity3pm", "Pressure9am", "Pressure3pm", "Cloud9am", "Cloud3pm", "Temp9am", "Temp3pm"))
 #table(weather_training$WindGustDir)
+
+
