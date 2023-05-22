@@ -1,5 +1,5 @@
-setwd("D:\\Programing\\universty programs\\Rlang\\Forward-DS-project")# Diaa
-#setwd("C:\\Users\\divos\\Documents\\R\\forward-project")#Youssef
+#setwd("D:\\Programing\\universty programs\\Rlang\\Forward-DS-project")# Diaa
+setwd("C:\\Users\\divos\\Documents\\R\\forward-project")#Youssef
 #setwd("")Mohmed
 #setwd("D:\\College\\Projects\\Data Science\\Forward-DS-project")#Mahmoud
 getwd()
@@ -24,20 +24,34 @@ weather_training
 #----------------------------------------------
 #check outliers
 #check numeric value
-numeric_data <- unlist(lapply(weather_training, is.numeric))
-weather_training[,numeric_data]
-boxplot(weather_training$MinTemp)
-boxplot(weather_training$MaxTemp)
+numeric_data <- select_if(weather_training, is.numeric)
 
 
-outliers<-boxplot(weather_training$MaxTemp)$out
-outliers
+maxTemp_outliers <- boxplot(weather_training$MaxTemp)$out
+minTemp_outliers <- boxplot(weather_training$MinTemp)$out
+evaporation_outliers <- boxplot(weather_training$Evaporation)$out
+sunshine_outliers <- boxplot(weather_training$Sunshine)$out
+windspeed_outliers = boxplot(weather_training$WindGustSpeed)$out
 
-weather_training[which(weather_training$MaxTemp %in% outliers),]
-clean_data<-weather_training[-which(weather_training$MaxTemp %in% outliers),]
-clean_data
+clean_data <- weather_training[-which(weather_training$MaxTemp %in% maxTemp_outliers), ]
+clean_data = clean_data[-which(clean_data$MinTemp %in% minTemp_outliers), ]
+clean_data = clean_data[-which(clean_data$Evaporation %in% evaporation_outliers), ]
+clean_data = clean_data[-which(clean_data$Sunshine %in% sunshine_outliers), ]
+clean_data = clean_data[-which(clean_data$WindGustSpeed %in% windspeed_outliers), ]
+
+
+
+par(
+  mfrow = c(3, 2)
+)
+boxplot(clean_data$MaxTemp, main = "max temp")
+boxplot(clean_data$MinTemp, main = "min temp")
+boxplot(clean_data$Evaporation, main = "evaporation")
+boxplot(clean_data$Sunshine, main = "sunshine")
+boxplot(clean_data$WindGustSpeed, main = "wind speed")
+
+
 #TODO do for all numeric columns
-boxplot(clean_data$MaxTemp)
 
 
 
